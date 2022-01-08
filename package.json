@@ -1,0 +1,10 @@
+{
+  "name": "marginnote2roam",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "prebuild": "rm -rf ./dist",
+    "build": "zip -q -r RoamAddon.mnaddon * && mkdir dist/ && mv RoamAddon.mnaddon ./dist/"
+  }
+}

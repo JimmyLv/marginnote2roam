@@ -1,0 +1,8 @@
+{
+  "addonid": "marginnote.extension.roam",
+  "author": "JimmyLv",
+  "title": "roam",
+  "version": "0.0.2",
+  "marginnote_version_min": "3.6.11",
+  "cert_key": "12dc2a4ae1b4f2bcf27cca2097fe1bfc"
+}
