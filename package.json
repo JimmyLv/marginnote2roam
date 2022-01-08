@@ -5,6 +5,6 @@
   "license": "MIT",
   "scripts": {
     "prebuild": "rm -rf ./dist",
-    "build": "zip -q -r RoamAddon.mnaddon * && mkdir dist/ && mv RoamAddon.mnaddon ./dist/"
+    "build": "zip -q -r RoamAddon.mnaddon * && mkdir dist/ && mv RoamAddon.mnaddon ./dist/ && open ./dist/RoamAddon.mnaddon"
   }
 }

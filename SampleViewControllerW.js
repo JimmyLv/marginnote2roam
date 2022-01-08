@@ -11,7 +11,7 @@ var SampleViewControllerW = JSB.defineClass(
     viewDidLoad: function () {
       self.text = "";
       self.positon = "rb";
-      self.isAddNoteiD = false;
+      self.isAddNoteiD = true;
       self.isQuickCapture = false;
 
       var savedPosition = NSUserDefaults.standardUserDefaults().objectForKey(
@@ -65,9 +65,10 @@ var SampleViewControllerW = JSB.defineClass(
         0.8
       );
       self.posButton.setTitleColorForState(highlightColor, 1);
-      self.posButton.backgroundColor = Application.sharedInstance().defaultTextColor.colorWithAlphaComponent(
-        0.6
-      );
+      self.posButton.backgroundColor =
+        Application.sharedInstance().defaultTextColor.colorWithAlphaComponent(
+          0.6
+        );
       self.posButton.layer.cornerRadius = 10;
       self.posButton.layer.masksToBounds = true;
       self.posButton.titleLabel.font = UIFont.systemFontOfSize(14);
@@ -98,9 +99,10 @@ var SampleViewControllerW = JSB.defineClass(
         0.8
       );
       self.backButton.setTitleColorForState(highlightColor, 1);
-      self.backButton.backgroundColor = Application.sharedInstance().defaultTextColor.colorWithAlphaComponent(
-        0.6
-      );
+      self.backButton.backgroundColor =
+        Application.sharedInstance().defaultTextColor.colorWithAlphaComponent(
+          0.6
+        );
       self.backButton.layer.cornerRadius = 10;
       self.backButton.layer.masksToBounds = true;
       self.backButton.titleLabel.font = UIFont.systemFontOfSize(14);
@@ -126,9 +128,10 @@ var SampleViewControllerW = JSB.defineClass(
         0.8
       );
       self.setButton.setTitleColorForState(highlightColor, 1);
-      self.setButton.backgroundColor = Application.sharedInstance().defaultTextColor.colorWithAlphaComponent(
-        0.6
-      );
+      self.setButton.backgroundColor =
+        Application.sharedInstance().defaultTextColor.colorWithAlphaComponent(
+          0.6
+        );
       self.setButton.layer.cornerRadius = 10;
       self.setButton.layer.masksToBounds = true;
       self.setButton.titleLabel.font = UIFont.systemFontOfSize(14);
@@ -147,9 +150,60 @@ var SampleViewControllerW = JSB.defineClass(
       UIApplication.sharedApplication().networkActivityIndicatorVisible = true;
     },
     webViewDidFinishLoad: function (webView) {
-      webView.evaluateJavaScript(
-        "function setContent(val){document.querySelector('.ProseMirror').innerHTML = val}"
-      );
+      var initJsCode = `function redirectToLastUsedGraph() {
+  const lastUsedGraph = localStorage.getItem("lastUsedGraph");
+  location.href = "https://roamresearch.com/#/app/" + lastUsedGraph;
+}
+redirectToLastUsedGraph();
+
+function getDataUid() {
+  var dt = new Date();
+  var year = dt.getFullYear();
+  var month = (dt.getMonth() + 1).toString().padStart(2, "0");
+  var day = dt.getDate().toString().padStart(2, "0");
+  return month + "-" + day + "-" + year;
+}
+
+function getPageUid() {
+  const [, pageUid] = window.location.href.split("/page/");
+  return pageUid;
+}
+
+async function getParentChildren(parentUid) {
+  const parents = await window.roamAlphaAPI.q(
+    \`[:find (pull ?p [:block/children, :block/uid]) :where [?p :block/uid "\` +
+      parentUid +
+      \`"]]\`
+  );
+  if (parents.length === 0 || !parents[0]) {
+    throw new Error(\`No existing parent of uid \` + parentUid);
+  }
+  return parents[0]?.[0]?.children;
+}
+
+async function createBlockIntoRoam(result, noteId) {
+  const dateUid = getDataUid();
+  const pageUid = getPageUid();
+
+  const parentUid = pageUid || dateUid;
+
+  const children = await getParentChildren(parentUid);
+
+  const uidObj = noteId === "undefined" ? undefined : { uid: noteId };
+
+  window.roamAlphaAPI.createBlock({
+    location: {
+      "parent-uid": parentUid,
+      order: children?.length || 0,
+    },
+    block: {
+      ...uidObj,
+      string: result,
+    },
+  });
+}
+`;
+      webView.evaluateJavaScript(initJsCode);
       UIApplication.sharedApplication().networkActivityIndicatorVisible = false;
     },
     webViewDidFailLoadWithError: function (webView, error) {
@@ -296,27 +350,8 @@ SampleViewControllerW.prototype.saveText = function (text, noteId) {
     .replace(/'/g, "\\'")
     .replace(/\n/g, "\\n");
 
-  var dt = new Date();
-  var year = dt.getFullYear();
-  var month = (dt.getMonth() + 1).toString().padStart(2, "0");
-  var day = dt.getDate().toString().padStart(2, "0");
-  const uid = month + "-" + day + "-" + year;
-
-  var jsCode = `
-    window
-    .roamAlphaAPI
-    .createBlock({
-      "location": {
-        "parent-uid": "${uid}", 
-        "order": 1
-      },
-      "block": {
-        "uid": "${noteId}", 
-        "string": "${result}"
-      }
-    })
-  `;
-
+  var jsCode = `createBlockIntoRoam('${result}', '${noteId}');`;
+  // Application.sharedInstance().alert(jsCode);
   this.webView.evaluateJavaScript(jsCode);
 };
 
