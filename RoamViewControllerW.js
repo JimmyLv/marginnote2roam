@@ -5,8 +5,8 @@
  * ModifyTime:  2021-09-11 9:35:48 PM
  */
 
-var SampleViewControllerW = JSB.defineClass(
-  "SampleViewControllerW : UIViewController <UIWebViewDelegate>",
+var RoamViewControllerW = JSB.defineClass(
+  "RoamViewControllerW : UIViewController <UIWebViewDelegate>",
   {
     viewDidLoad: function () {
       self.text = "";
@@ -88,7 +88,7 @@ var SampleViewControllerW = JSB.defineClass(
         height: 40,
       };
       self.backButton.autoresizingMask = 1 << 3;
-      self.backButton.setTitleForState("back", 0);
+      self.backButton.setTitleForState("返回", 0);
       self.backButton.setTitleColorForState(
         Application.sharedInstance().defaultTintColorForDarkBackground,
         0
@@ -117,7 +117,7 @@ var SampleViewControllerW = JSB.defineClass(
         height: 40,
       };
       self.setButton.autoresizingMask = 1 << 3;
-      self.setButton.setTitleForState("笔记不带id", 0);
+      self.setButton.setTitleForState("不带link", 0);
       self.setButton.setTitleColorForState(
         Application.sharedInstance().defaultTintColorForDarkBackground,
         0
@@ -306,7 +306,7 @@ async function createBlockIntoRoam(result, noteId) {
         2
       );
       self.setButton.setTitleForState(
-        self.isAddNoteiD ? "笔记带id" : "笔记不带id",
+        self.isAddNoteiD ? "带link" : "不带link",
         0
       );
     },
@@ -321,7 +321,7 @@ async function createBlockIntoRoam(result, noteId) {
   }
 );
 
-SampleViewControllerW.prototype.saveText = function (text, noteId) {
+RoamViewControllerW.prototype.saveText = function (text, noteId) {
   if (!this.webView || !this.webView.window) return;
   if (noteId) {
     if (this.isAddNoteiD) {
@@ -355,7 +355,7 @@ SampleViewControllerW.prototype.saveText = function (text, noteId) {
   this.webView.evaluateJavaScript(jsCode);
 };
 
-SampleViewControllerW.prototype.updateButton = function () {
+RoamViewControllerW.prototype.updateButton = function () {
   if (this.positon == "lt") this.posButton.setTitleForState("左上", 0);
   else if (this.positon == "rt") this.posButton.setTitleForState("右上", 0);
   else if (this.positon == "ct") this.posButton.setTitleForState("中", 0);

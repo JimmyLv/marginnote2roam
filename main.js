@@ -1,5 +1,5 @@
 JSB.newAddon = function (mainPath) {
-  JSB.require("SampleViewControllerW");
+  JSB.require("RoamViewControllerW");
   var newAddonClass = JSB.defineClass(
     "RoamAddon : JSExtension",
     /*Instance members*/ {
@@ -45,7 +45,7 @@ JSB.newAddon = function (mainPath) {
               height: 480,
             };
         };
-        self.webController = SampleViewControllerW.new();
+        self.webController = RoamViewControllerW.new();
         self.webController.mainPath = mainPath;
       },
       //Window disconnect
