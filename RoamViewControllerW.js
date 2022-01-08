@@ -330,7 +330,9 @@ RoamViewControllerW.prototype.saveText = function (text, noteId) {
         `
 [marginnote3app://note/${noteId}](marginnote3app://note/${noteId})`;
     } else {
-      this.text = text;
+      this.text =
+        text?.substring(0, text.length - 2) +
+        ` [*](marginnote3app://note/${noteId})`;
     }
   } else {
     this.text = text;
